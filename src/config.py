@@ -27,7 +27,7 @@ CURSOR_CONFIG = {
 # Paramètres des touches
 KEY_CONFIG = {
     "quit_key": "q",
-    "click_key": "space",
+    "click_key": "c",
     "precision_modifier": "shift",
     "save_position": "ctrl+s",
     "load_position": "ctrl+l"
