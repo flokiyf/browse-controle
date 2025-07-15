@@ -180,15 +180,20 @@ class BrowserController:
             return False
     
     async def click(self, x: int, y: int):
-        """Clique à la position spécifiée"""
+        """Clique à la position spécifiée (simple et fiable)"""
         if not self._is_running or not self.page:
             logger.warning("⚠️ Navigateur non disponible")
             return False
         
         try:
+            # Forcer le focus sur la page
+            await self.page.bring_to_front()
+            
+            # Clic simple et direct
             await self.page.mouse.click(x, y)
             logger.info(f"🖱️ Clic effectué à ({x}, {y})")
             return True
+            
         except Exception as e:
             logger.error(f"❌ Erreur lors du clic: {e}")
             return False

@@ -22,13 +22,15 @@ class KeyboardHandler:
         self.key_handlers: Dict[str, Callable] = {}
         self.combination_handlers: Dict[str, Callable] = {}
         self._listener_thread = None
+        self.loop = None  # Boucle d'événements asyncio
         
-    def start(self):
+    def start(self, loop=None):
         """Démarre l'écoute des événements clavier"""
         if self.is_running:
             logger.warning("⚠️ Gestionnaire de clavier déjà en cours")
             return
         
+        self.loop = loop
         self.is_running = True
         self._listener_thread = threading.Thread(target=self._listen_for_keys, daemon=True)
         self._listener_thread.start()
@@ -94,17 +96,24 @@ class KeyboardHandler:
             logger.debug(f"⌨️ Touche relâchée: {key}")
     
     def _handle_click_key(self):
-        """Gère la touche de clic (espace)"""
-        if 'space' not in self.pressed_keys:
-            self.pressed_keys.add('space')
-            logger.info("🖱️ Touche clic pressée")
-            
-            # Appeler le gestionnaire de clic si défini
-            if 'click' in self.key_handlers:
-                try:
-                    self.key_handlers['click']()
-                except Exception as e:
-                    logger.error(f"❌ Erreur dans le gestionnaire de clic: {e}")
+        """Gère la touche de clic (c)"""
+        click_key = KEY_CONFIG["click_key"]
+        self.pressed_keys.add(click_key)
+        logger.info("🖱️ Touche clic pressée")
+        
+        # Appeler le gestionnaire de clic si défini
+        if 'click' in self.key_handlers:
+            try:
+                import asyncio
+                if self.loop:
+                    # Créer une tâche asynchrone pour le clic avec un délai
+                    async def delayed_click():
+                        await asyncio.sleep(0.1)  # Petit délai pour éviter les clics multiples
+                        await self.key_handlers['click']()
+                    
+                    asyncio.run_coroutine_threadsafe(delayed_click(), self.loop)
+            except Exception as e:
+                logger.error(f"❌ Erreur dans le gestionnaire de clic: {e}")
     
     def _handle_quit_key(self):
         """Gère la touche de sortie (Q)"""

@@ -86,8 +86,8 @@ class CursorBrowserControl:
             self.current_position = (center_x, center_y)
             await self.browser_controller.move_cursor(center_x, center_y)
             
-            # Démarrer le gestionnaire de clavier
-            self.keyboard_handler.start()
+            # Démarrer le gestionnaire de clavier avec la boucle d'événements
+            self.keyboard_handler.start(asyncio.get_running_loop())
             
             # Enregistrer les gestionnaires d'événements
             self._register_event_handlers()
@@ -232,7 +232,7 @@ class CursorBrowserControl:
         print(f"\n{Fore.CYAN}🎮 Contrôles disponibles:{Style.RESET_ALL}")
         print(f"{Fore.WHITE}  ↑↓←→ : Déplacer le curseur{Style.RESET_ALL}")
         print(f"{Fore.WHITE}  Shift + Direction : Mode précision{Style.RESET_ALL}")
-        print(f"{Fore.WHITE}  Espace : Cliquer{Style.RESET_ALL}")
+        print(f"{Fore.WHITE}  C : Cliquer{Style.RESET_ALL}")
         print(f"{Fore.WHITE}  Ctrl+S : Sauvegarder la position{Style.RESET_ALL}")
         print(f"{Fore.WHITE}  Ctrl+L : Charger une position{Style.RESET_ALL}")
         print(f"{Fore.WHITE}  Q : Quitter{Style.RESET_ALL}")
